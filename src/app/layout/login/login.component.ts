@@ -66,6 +66,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
       end: 100,
       color: "blue"
     });
+
+    this.startAnimating(16);
   }
 
   ngOnInit() {
