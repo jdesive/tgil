@@ -1,0 +1,31 @@
+<div class="center-container">
+  <div *ngIf="quizLoading">
+    <h2>Loading Quiz...</h2>
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <div *ngIf="!quizFinished && !quizLoading">
+    <h2>{{quiz.name}}</h2>
+    <h4>Due: {{quiz.dueDate | date:'yyyy-MM-dd hh:mm:ss a z'}}</h4>
+    <p>{{quiz.questions[currentQuestion].question}}</p>
+
+    <div class="form-check" *ngFor="let answer of quiz.questions[currentQuestion].answers">
+      <input class="form-check-input" type="radio" name="questionRadios" [id]="'questionRadios' + answer.id" [value]="answer.answer" [(ngModel)]="selection">
+      <label class="form-check-label" [htmlFor]="'questionRadios' + answer.id">
+        {{answer.answer}}
+      </label>
+    </div>
+    <button type="button" class="btn btn-primary" [disabled]="selection == null" (click)="nextQuestion()">{{(totalQuestions-1) === currentQuestion ? 'Submit Quiz' : 'Next Question >'}}</button>
+  </div>
+
+  <div *ngIf="quizFinished && !quizLoading">
+    <h2>Quiz Complete</h2>
+    <p *ngIf="!resultsLoading">You scored a {{quizResults.score}}%!</p>
+    <div>
+      <div class="spinner-border" role="status" *ngIf="resultsLoading">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" routerLink="/quiz">Back to quizzes</button>
+  </div>
+</div>

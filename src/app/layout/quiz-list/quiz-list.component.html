@@ -1,0 +1,103 @@
+<div class="horz-center-container">
+  <div class="card width--90pct">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item" (click)="selected = 'active'">
+          <a class="nav-link" [class.active]="selected === 'active'">Active</a>
+        </li>
+        <li class="nav-item" (click)="selected = 'completed'">
+          <a class="nav-link" [class.active]="selected === 'completed'">Completed</a>
+        </li>
+        <li class="nav-item" (click)="selected = 'all'">
+          <a class="nav-link" [class.active]="selected === 'all'">All</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+
+      <div class="d-flex justify-content-center" *ngIf="loading">
+        <div class="spinner-grow text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <table class="table table-hover" *ngIf="!loading && selected === 'active'">
+        <caption>Active quizzes for you</caption>
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Tries left</th>
+          <th scope="col">Recent Score</th>
+          <th scope="col">Score Date</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let quiz of activeQuizzes">
+          <th scope="row">{{activeQuizzes.indexOf(quiz)+1}}</th>
+          <td>{{quiz.name}}</td>
+          <td>{{quiz.dueDate | date:'yyyy-MM-dd hh:mm:ss a Z'}}</td>
+          <td>3</td>
+          <td>{{quiz.score !== undefined ? quiz.score + '%' : ''}}</td>
+          <td>{{quiz.scoreDate | date:'yyyy-MM-dd hh:mm:ss a Z'}}</td>
+          <td><button type="button" class="btn btn-primary" routerLink="/quiz/take" [queryParams]="{id: quiz.id}">Take Quiz</button></td>
+        </tr>
+        </tbody>
+      </table>
+
+      <table class="table table-hover" *ngIf="!loading && selected === 'completed'">
+        <caption>Quizzes past due date</caption>
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Score</th>
+          <th scope="col">Score Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let quiz of completedQuizzes">
+          <th scope="row">{{completedQuizzes.indexOf(quiz)+1}}</th>
+          <td>{{quiz.name}}</td>
+          <td>{{quiz.dueDate | date:'yyyy-MM-dd hh:mm:ss a Z'}}</td>
+          <td>{{quiz.score !== undefined ? quiz.score + '%' : ''}}</td>
+          <td>{{quiz.scoreDate | date:'yyyy-MM-dd hh:mm:ss a Z'}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <table class="table table-hover" *ngIf="!loading && selected === 'all'">
+        <caption>All quizzes</caption>
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Tries Left</th>
+          <th scope="col">Score</th>
+          <th scope="col">Score Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let quiz of quizzes">
+          <th scope="row">{{quiz.id}}</th>
+          <td>{{quiz.name}}</td>
+          <td>{{quiz.dueDate | date:'yyyy-MM-dd hh:mm:ss a Z'}}</td>
+          <td>3</td>
+          <td>{{quiz.score !== undefined ? quiz.score + '%' : ''}}</td>
+          <td>{{quiz.scoreDate | date:'yyyy-MM-dd hh:mm:ss a Z'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <button type="button" class="btn btn-success"
+              style="float: right;" (click)="loadQuizzes()">
+        <i class="fas fa-sync"></i>
+      </button>
+    </div>
+  </div>
+</div>

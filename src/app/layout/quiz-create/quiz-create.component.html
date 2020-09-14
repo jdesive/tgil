@@ -1,0 +1,99 @@
+<div class="horz-center-container">
+  <div class="card width--90pct">
+
+    <div class="card-header">Create Quiz</div>
+    <div class="card-body">
+
+      <div class="form-group">
+        <label for="name">Quiz Name</label>
+        <input type="text" class="form-control" id="name" [(ngModel)]="quizName"/>
+      </div>
+      <div class="form-group">
+        <button type="button" class="btn btn-link" style="float: right;" [owlDateTimeTrigger]="dt2"><i class="fa fa-calendar"></i></button>
+        <div style="overflow: hidden; padding-right: .5em;">
+          <input [owlDateTime]="dt2" placeholder="Date Time" class="form-control" [(ngModel)]="quizDueDate">
+        </div>
+        <owl-date-time #dt2 name="dateTime" ngDefaultControl=""></owl-date-time>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addQuestionModal" style="float: right;"><i class="fas fa-plus"></i> Question</button>
+
+      <table class="table" style="margin-top: 16px;">
+        <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Question</th>
+          <th scope="col">Answer</th>
+          <th scope="col"># of answers</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let question of quizQuestions">
+          <th scope="row">{{quizQuestions.indexOf(question)+1}}</th>
+          <td>{{question.question}}</td>
+          <td>{{question.correctAnswer}}</td>
+          <td>{{question.answers.length}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="alert alert-danger" role="alert" *ngIf="formError">
+        {{formErrorMessage}}
+      </div>
+
+    </div>
+
+    <div class="card-footer">
+      <div class="center-container">
+        <button type="button" class="btn btn-success" (click)="submitQuiz()">Submit</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div #addQuestionModal class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="question">Question</label>
+          <input type="text" class="form-control" id="question" [(ngModel)]="questionValue"/>
+        </div>
+        <div class="form-group">
+          <label for="canswer">Correct Answer</label>
+          <select class="form-control" id="canswer" [(ngModel)]="questionCorrectAnswer">
+            <option *ngFor="let answer of questionAnswers">{{answer}}</option>
+          </select>
+        </div>
+        <label>Enter Answer</label>
+        <div>
+          <button type="button" class="btn btn-success"
+                  style="float: right;" (click)="addAnswer()"
+                  [disabled]="questionAnswers.length === 4">
+            <i class="fas fa-plus"></i>
+          </button>
+          <div style="overflow: hidden; padding-right: .5em;">
+            <input type="text" class="form-control"
+                   id="answerInput" [(ngModel)]="questionAnswer"
+                   [disabled]="questionAnswers.length === 4"/>
+          </div>
+        </div>
+        <div style="margin: 16px 8px 8px;">
+          <div *ngFor="let answer of questionAnswers"><i class="fas fa-minus-square" style="color: red;" (click)="removeAnswer(answer)"></i> {{answer}}</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeQuestionModal()">Close</button>
+        <button type="button" class="btn btn-primary" (click)="addQuestion()">Add</button>
+        <button type="button" class="btn btn-secondary" id="close-question" data-dismiss="modal" hidden></button>
+      </div>
+    </div>
+  </div>
+</div>
