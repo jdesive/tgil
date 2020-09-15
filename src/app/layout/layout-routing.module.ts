@@ -4,7 +4,6 @@ import {QuizListComponent} from './quiz-list/quiz-list.component';
 import {LayoutComponent} from './layout.component';
 import {QuizTakeComponent} from './quiz-take/quiz-take.component';
 import {LoginComponent} from './login/login.component';
-import {RegisterComponent} from './register/register.component';
 import {AuthGuard} from '../core/guard/auth.guard';
 import {QuizCreateComponent} from './quiz-create/quiz-create.component';
 
@@ -15,7 +14,6 @@ const routes: Routes = [
     component: LayoutComponent,
     children: [
       {path: 'login', component: LoginComponent},
-      {path: 'register', component: RegisterComponent},
       {
         path: 'quiz',
         canActivate: [AuthGuard],

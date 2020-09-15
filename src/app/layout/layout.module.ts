@@ -6,7 +6,6 @@ import {LayoutComponent} from './layout.component';
 import {QuizTakeComponent} from './quiz-take/quiz-take.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoginComponent} from './login/login.component';
-import {RegisterComponent} from './register/register.component';
 import {QuizCreateComponent} from './quiz-create/quiz-create.component';
 import {OwlDateTimeModule, OwlNativeDateTimeModule} from 'ng-pick-datetime';
 
@@ -16,7 +15,6 @@ import {OwlDateTimeModule, OwlNativeDateTimeModule} from 'ng-pick-datetime';
     QuizListComponent,
     QuizTakeComponent,
     LoginComponent,
-    RegisterComponent,
     QuizCreateComponent
   ],
   imports: [
