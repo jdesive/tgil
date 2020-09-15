@@ -113,9 +113,9 @@ export class LoginComponent implements AfterViewInit {
   animate() {
       this.drawAll();
       // increase percent for the next frame
-      if ((this.percent === 0 && !this.up) || (this.percent === 100) || this.percent === this.d) {
+      if ((this.percent === 1 && !this.up) || (this.percent === 99) || this.percent === this.d) {
         this.up = !this.up;
-        this.d = Math.floor(Math.random() * Math.floor(100));
+        this.d = Math.floor(Math.random() * Math.floor(99));
       }
 
       if (this.up === true) {
