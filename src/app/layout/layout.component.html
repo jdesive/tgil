@@ -1,7 +1,7 @@
 <div class="topbar">
   <div class="coins-container">
     <img src="/assets/coins.png" class="coins-img">
-    <span class="coins-text">100</span>
+    <span class="coins-text">{{coins}}</span>
   </div>
 
   <div class="store-container" (click)="openStore()">
@@ -16,8 +16,21 @@
     <span class="level-text">Level: 10</span>
   </div>
 </div>
-<router-outlet></router-outlet>
+<app-login (coins)="addCoins($event)" [maxTimeLevel]="maxTimeLevel"></app-login>
 
 <div class="left-side-menu" [@slideInOut]="leftSideMenuState">
   <span class="left-menu-title">Power Up Shop</span>
+
+  <br>
+
+  <div class="left-menu-items">
+
+    <div class="left-menu-item">
+      <span class="left-menu-item-title">Increase timer</span>
+      <span class="left-menu-item-price">{{timePrice}}</span>
+      <span class="left-menu-item-buy" (click)="buyTimeUpgrade()">$</span>
+    </div>
+
+  </div>
+
 </div>

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {AuthService} from '../core/service/auth.service';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 
@@ -25,12 +25,37 @@ export class LayoutComponent implements OnInit {
 
   leftSideMenuState = 'in';
 
+  coins = 0;
+  level = 1;
+
+  maxTimeLevel = 0;
+  timePrice = (10 * Math.floor(Math.pow(1.1, this.maxTimeLevel)));
+
+
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
 
 
 
+  }
+
+  buyTimeUpgrade() {
+    const price = (10 * Math.floor(Math.pow(1.1, this.maxTimeLevel)));
+    if (this.coins >= price) {
+      this.timePrice = (10 * Math.floor(Math.pow(1.1, this.maxTimeLevel)));
+      this.maxTimeLevel += 1;
+      this.coins = this.coins - price;
+    }
+  }
+
+  addCoins(val) {
+
+    if (!val || val === 0) {
+      this.coins = 0;
+    }
+
+    this.coins += val;
   }
 
   openStore() {

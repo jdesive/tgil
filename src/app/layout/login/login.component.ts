@@ -1,5 +1,14 @@
-import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  Output,
+  ViewChild
+} from '@angular/core';
+import {FormBuilder} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../core/service/auth.service';
@@ -14,6 +23,12 @@ export class LoginComponent implements AfterViewInit {
 
 
   @ViewChild('canvas') canvas: ElementRef;
+
+  @Output('coins') coins = new EventEmitter();
+
+  @Input('maxTimeLevel') maxTimeLevel = 0;
+  @Input('level') level = 1;
+
   ctx;
   up = true;
   d = Math.floor(Math.random() * Math.floor(100));
@@ -27,7 +42,7 @@ export class LoginComponent implements AfterViewInit {
   now;
   then;
   elapsed;
-  time = 5;
+  time = 5 + this.maxTimeLevel;
   radian = 0.0174533;
   start = 0;
   endStart = 0;
@@ -47,9 +62,9 @@ export class LoginComponent implements AfterViewInit {
     let rect = this.canvas.nativeElement.getBoundingClientRect();
     this.globalX = event.clientX - rect.left;
     this.globalY = event.clientY - rect.top;
-    let data = this.ctx.getImageData( this.globalX, this.globalY, 1, 1).data;
-    let rgb = [ data[0], data[1], data[2] ];
-    if(data[0] != 0 ||  data[1] != 0 ||  data[2] != 0){
+    let data = this.ctx.getImageData(this.globalX, this.globalY, 1, 1).data;
+    let rgb = [data[0], data[1], data[2]];
+    if (data[0] != 0 || data[1] != 0 || data[2] != 0) {
       this.triggerDeath();
     }
 
@@ -60,7 +75,8 @@ export class LoginComponent implements AfterViewInit {
 
   constructor(private http: HttpClient, private formBuilder: FormBuilder,
               private router: Router, private authService: AuthService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute) {
+  }
 
   ngAfterViewInit(): void {
     this.ctx = this.canvas.nativeElement.getContext("2d");
@@ -91,24 +107,32 @@ export class LoginComponent implements AfterViewInit {
   }
 
 
-   tick() {
+  tick() {
     this.animate();
     this.checkSwitch();
   }
 
-   startTimee(){
+  startTimee() {
     let intervalId = setInterval(() => {
       this.time = this.time - 1;
-      if(this.time === 0){
+      if (this.time === 0) {
         clearInterval(intervalId);
         this.triggerDeath();
       }
     }, 1500);
   }
-  checkSwitch(){
-    if(((Math.pow(this.globalX - this.guages[0].x,2) + Math.pow(this.globalY - this.guages[0].y,2) < Math.pow(this.guages[0].radius,2)) && !this.inside) || ((Math.pow(this.globalX - this.guages[0].x,2) + Math.pow(this.globalY - this.guages[0].y,2) > Math.pow(this.guages[0].radius,2)) && this.inside)){
+
+  checkSwitch() {
+    if (((Math.pow(this.globalX - this.guages[0].x, 2) + Math.pow(this.globalY - this.guages[0].y, 2) < Math.pow(this.guages[0].radius, 2)) && !this.inside) || ((Math.pow(this.globalX - this.guages[0].x, 2) + Math.pow(this.globalY - this.guages[0].y, 2) > Math.pow(this.guages[0].radius, 2)) && this.inside)) {
       this.inside = !this.inside;
-      this.time = 5;
+      this.time = 5 + this.maxTimeLevel;;
+
+      if (this.inside) {
+
+        this.coins.emit(1);
+
+      }
+
     }
   }
 
@@ -133,36 +157,37 @@ export class LoginComponent implements AfterViewInit {
 
   render(guage) {
     this.ctx.beginPath();
-    this.start = (this.start+this.radian);
-    this.endStart = (((this.percent/100) * this.PI2)+this.start) % this.PI2;
+    this.start = (this.start + this.radian);
+    this.endStart = (((this.percent / 100) * this.PI2) + this.start) % this.PI2;
     this.ctx.arc(guage.x, guage.y, guage.radius, this.start, this.endStart);
     this.ctx.strokeStyle = guage.color;
     this.ctx.stroke();
   }
 
   animate() {
-      this.drawAll();
-      // increase percent for the next frame
-      if ((this.percent === 1 && !this.up) || (this.percent === 99) || this.percent === this.d) {
-        this.up = !this.up;
-        this.d = Math.floor(Math.random() * Math.floor(99));
-      }
-
-      if (this.up === true) {
-        this.percent = this.percent + 1;
-      } else {
-        this.percent = this.percent - 1;
-      }
-
+    this.drawAll();
+    // increase percent for the next frame
+    if ((this.percent === 1 && !this.up) || (this.percent === 99) || this.percent === this.d) {
+      this.up = !this.up;
+      this.d = Math.floor(Math.random() * Math.floor(99));
     }
 
-    triggerDeath(){
+    if (this.up === true) {
+      this.percent = this.percent + 1;
+    } else {
+      this.percent = this.percent - 1;
+    }
+
+  }
+
+  triggerDeath() {
     this.isRunning = false;
-      this.start = 0;
-      this.percent = 0;
-      this.time = 5;
-      this.up = true;
-      this.animate();
-      this.abortTimer();
-    }
+    this.start = 0;
+    this.percent = 0;
+    this.time = 5 + this.maxTimeLevel;;
+    this.up = true;
+    this.coins.emit(0);
+    this.animate();
+    this.abortTimer();
+  }
 }
