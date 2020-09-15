@@ -1,40 +1,23 @@
-<!--<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-  <a class="navbar-brand" routerLink="/quiz">
-    <img src="favicon.ico" width="30" height="30" class="d-inline-block align-top" alt="">
-    Demo Quiz
-  </a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item" *ngIf="authService.isLoggedIn()" routerLink="/quiz/list" routerLinkActive="active">
-        <a class="nav-link">Home</a>
-      </li>
-      <li class="nav-item" *ngIf="authService.isLoggedIn()" routerLink="/quiz/create" routerLinkActive="active">
-        <a class="nav-link">Create</a>
-      </li>
-    </ul>
-
-&lt;!&ndash;  Search Box
-    <form class="form-inline my-2 my-lg-0" *ngIf="authService.isLoggedIn()">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>&ndash;&gt;
-
-    <ul class="navbar-nav">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{authService.isLoggedIn() ? authService.currentUser.username : 'Log In'}}
-        </a>
-        <div class="dropdown-menu" aria-labelledby="accountDropdown">
-          <a class="dropdown-item" (click)="authService.logout()" *ngIf="authService.isLoggedIn()">Logout</a>
-          <a class="dropdown-item" routerLink="/login" *ngIf="!authService.isLoggedIn()">Login</a>
-        </div>
-      </li>
-    </ul>
-
+<div class="topbar">
+  <div class="coins-container">
+    <img src="/assets/coins.png" class="coins-img">
+    <span class="coins-text">100</span>
   </div>
-</nav>-->
+
+  <div class="store-container" (click)="openStore()">
+    <img src="/assets/store.webp" class="store-img">
+  </div>
+
+  <div class="logo-container">
+    <span class="logo-text">The Game Is Loading</span>
+  </div>
+
+  <div class="level-container">
+    <span class="level-text">Level: 10</span>
+  </div>
+</div>
 <router-outlet></router-outlet>
+
+<div class="left-side-menu" [@slideInOut]="leftSideMenuState">
+  <span class="left-menu-title">Power Up Shop</span>
+</div>

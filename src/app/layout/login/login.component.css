@@ -1,5 +1,26 @@
-body {
-  background-color: white;
+.background {
+  background: url('/assets/bg.jpg');
+  background-size: contain;
+  font-family: "Roboto";
+}
+
+.loading-text {
+  color: cyan;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, 50%);
+}
+
+.movement-countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  color: red;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 canvas {

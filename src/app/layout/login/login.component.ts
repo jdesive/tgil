@@ -1,4 +1,4 @@
-import {AfterContentInit, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -59,7 +59,7 @@ export class LoginComponent implements AfterViewInit {
 
     // Set context styles
     this.ctx.lineWidth = 15;
-    this.ctx.strokeStyle = '#85c3b8';
+    this.ctx.strokeStyle = 'cyan';
     this.ctx.shadowColor = "black";
     this.ctx.shadowOffsetX = 0;
     this.ctx.shadowOffsetY = 0;
@@ -72,7 +72,7 @@ export class LoginComponent implements AfterViewInit {
       radius: 40,
       start: 0,
       end: 100,
-      color: "blue"
+      color: "cyan"
     });
     this.tid = setInterval(() => this.tick(), /*63*/20);
   }
