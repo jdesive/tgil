@@ -1,25 +1,17 @@
-import {AfterContentInit, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../core/service/auth.service';
 
-export interface User {
-  username: string;
-  password: string;
-}
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements AfterViewInit {
 
-  loginForm: FormGroup;
-  submitted = false;
-  loading = false;
-  returnUrl: string;
 
   @ViewChild('canvas') canvas: ElementRef;
   ctx;
@@ -35,12 +27,28 @@ export class LoginComponent implements OnInit, AfterViewInit {
   now;
   then;
   elapsed;
+  radian = 0.0174533;
+  start = 0;
+  endStart = 0;
 
   quart = Math.PI / 2;
   PI2 = Math.PI * 2;
   percent = 0;
+  deg = 0;
+
+  @HostListener('mousemove', ['$event'])
+  onMousemove(event: MouseEvent) {
+    let rect = this.canvas.nativeElement.getBoundingClientRect();
+    let data = this.ctx.getImageData( event.clientX - rect.left, event.clientY - rect.top, 1, 1).data;
+    let rgb = [ data[0], data[1], data[2] ];
+    if(data[0] != 0 ||  data[1] != 0 ||  data[2] != 0){
+      console.log(rgb);
+    }
+
+  }
 
   guages = [];
+  tid: number;
 
   constructor(private http: HttpClient, private formBuilder: FormBuilder,
               private router: Router, private authService: AuthService,
@@ -66,26 +74,20 @@ export class LoginComponent implements OnInit, AfterViewInit {
       end: 100,
       color: "blue"
     });
-
-    this.startAnimating(16);
+    this.tid = setInterval(() => this.tick(), /*63*/20);
   }
 
-  ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/quiz/list';
-    this.loginForm = this.formBuilder.group({
-      username: ['', [Validators.required]],
-      password: ['', Validators.required],
-    });
-  }
 
-  startAnimating(fps) {
-    this.fpsInterval = 1000 / fps;
-    this.then = Date.now();
-    this.startTime = this.then;
+   tick() {
     this.animate();
   }
 
-  drawAll(percent) {
+
+  abortTimer() { // to be called when you want to stop the timer
+    clearInterval(this.tid);
+  }
+
+  drawAll() {
 
     // clear the canvas
 
@@ -94,47 +96,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
     // draw all the guages
 
     for (var i = 0; i < this.guages.length; i++) {
-      this.render(this.guages[i], percent);
+      this.render(this.guages[i]);
     }
 
   }
 
-  render(guage, percent) {
-    var pct = percent / 100;
-    var extent = (guage.end - guage.start) * pct;
-    var current = (guage.end - guage.start) / 100 * this.PI2 * pct - this.quart;
+  render(guage) {
     this.ctx.beginPath();
-    this.ctx.arc(guage.x, guage.y, guage.radius, -this.quart, current);
+    this.start = (this.start+this.radian);
+    this.endStart = (((this.percent/100) * this.PI2)+this.start) % this.PI2;
+    this.ctx.arc(guage.x, guage.y, guage.radius, this.start, this.endStart);
     this.ctx.strokeStyle = guage.color;
     this.ctx.stroke();
   }
 
   animate() {
-
-    // if the animation is not 100% then request another frame
-
-    console.log(this.percent);
-
-    if (this.percent <= 100) {
-      console.log('Request');
-      requestAnimationFrame(this.animate.bind(this));
-    }
-
-
-    this.now = Date.now();
-    this.elapsed = this.now - this.then;
-
-    // if enough time has elapsed, draw the next frame
-
-    if (this.elapsed > this.fpsInterval) {
-
-      // Get ready for next frame by setting then=now, but also adjust for your
-      // specified fpsInterval not being a multiple of RAF's interval (16.7ms)
-      this.then = this.now - (this.elapsed % this.fpsInterval);
-
-      // Put your drawing code here
-
-      this.drawAll(this.percent);
+      this.drawAll();
       // increase percent for the next frame
       if ((this.percent === 0 && !this.up) || (this.percent === 100) || this.percent === this.d) {
         this.up = !this.up;
@@ -148,23 +125,4 @@ export class LoginComponent implements OnInit, AfterViewInit {
       }
 
     }
-
-    // redraw all guages with the current percent
-  }
-
-  get f() {
-    return this.loginForm.controls;
-  }
-
-  async onSubmit() {
-    this.submitted = true;
-    if (this.loginForm.invalid) {
-      return;
-    }
-    this.loading = true;
-    this.authService.login(this.f.username.value, this.f.password.value).add(() => {
-      this.loading = false;
-      this.router.navigate([this.returnUrl]);
-    });
-  }
 }
