@@ -1,5 +1,8 @@
 <div class="center-container background">
+  <div *ngIf="!isRunning">
+    <button (click)="startGame()" class="glow-on-hover">Start</button>
+  </div>
   <canvas class="canvas" id="canv" #canvas width=100 height=100></canvas>
 </div>
-<p class="pulsate loading-text">The game is loading...</p>
-<span class="movement-countdown pulsate">5</span>
+<p class="pulsate loading-text" *ngIf="isRunning">The game is loading...</p>
+<span class="movement-countdown pulsate" *ngIf="isRunning">{{time}}</span>

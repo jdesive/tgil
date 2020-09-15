@@ -27,9 +27,15 @@ export class LoginComponent implements AfterViewInit {
   now;
   then;
   elapsed;
+  time = 5;
   radian = 0.0174533;
   start = 0;
   endStart = 0;
+  showCounter = false;
+  isRunning = false;
+  globalX = 0;
+  globalY = 0;
+  inside = false;
 
   quart = Math.PI / 2;
   PI2 = Math.PI * 2;
@@ -39,10 +45,12 @@ export class LoginComponent implements AfterViewInit {
   @HostListener('mousemove', ['$event'])
   onMousemove(event: MouseEvent) {
     let rect = this.canvas.nativeElement.getBoundingClientRect();
-    let data = this.ctx.getImageData( event.clientX - rect.left, event.clientY - rect.top, 1, 1).data;
+    this.globalX = event.clientX - rect.left;
+    this.globalY = event.clientY - rect.top;
+    let data = this.ctx.getImageData( this.globalX, this.globalY, 1, 1).data;
     let rgb = [ data[0], data[1], data[2] ];
     if(data[0] != 0 ||  data[1] != 0 ||  data[2] != 0){
-      console.log(rgb);
+      this.triggerDeath();
     }
 
   }
@@ -74,12 +82,34 @@ export class LoginComponent implements AfterViewInit {
       end: 100,
       color: "cyan"
     });
+  }
+
+  startGame() {
+    this.isRunning = true;
+    this.startTimee();
     this.tid = setInterval(() => this.tick(), /*63*/20);
   }
 
 
    tick() {
     this.animate();
+    this.checkSwitch();
+  }
+
+   startTimee(){
+    let intervalId = setInterval(() => {
+      this.time = this.time - 1;
+      if(this.time === 0){
+        clearInterval(intervalId);
+        this.triggerDeath();
+      }
+    }, 1500);
+  }
+  checkSwitch(){
+    if(((Math.pow(this.globalX - this.guages[0].x,2) + Math.pow(this.globalY - this.guages[0].y,2) < Math.pow(this.guages[0].radius,2)) && !this.inside) || ((Math.pow(this.globalX - this.guages[0].x,2) + Math.pow(this.globalY - this.guages[0].y,2) > Math.pow(this.guages[0].radius,2)) && this.inside)){
+      this.inside = !this.inside;
+      this.time = 5;
+    }
   }
 
 
@@ -124,5 +154,15 @@ export class LoginComponent implements AfterViewInit {
         this.percent = this.percent - 1;
       }
 
+    }
+
+    triggerDeath(){
+    this.isRunning = false;
+      this.start = 0;
+      this.percent = 0;
+      this.time = 5;
+      this.up = true;
+      this.animate();
+      this.abortTimer();
     }
 }
