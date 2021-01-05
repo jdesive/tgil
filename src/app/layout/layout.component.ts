@@ -25,6 +25,8 @@ export class LayoutComponent implements OnInit {
 
   leftSideMenuState = 'in';
 
+  @Output('gamePause') pauseGame = new EventEmitter();
+
   coins = 0;
   level = 1;
 
@@ -61,6 +63,12 @@ export class LayoutComponent implements OnInit {
   openStore() {
 
     this.leftSideMenuState = this.leftSideMenuState === 'out' ? 'in' : 'out';
+
+    if (this.leftSideMenuState === 'out') {
+      this.pauseGame.emit(true);
+    } else {
+      this.pauseGame.emit(false);
+    }
 
   }
 

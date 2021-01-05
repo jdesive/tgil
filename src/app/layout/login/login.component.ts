@@ -51,6 +51,7 @@ export class LoginComponent implements AfterViewInit {
   globalX = 0;
   globalY = 0;
   inside = false;
+  gamePaused = false;
 
   quart = Math.PI / 2;
   PI2 = Math.PI * 2;
@@ -72,6 +73,7 @@ export class LoginComponent implements AfterViewInit {
 
   guages = [];
   tid: number;
+  deathTimerId: number;
 
   constructor(private http: HttpClient, private formBuilder: FormBuilder,
               private router: Router, private authService: AuthService,
@@ -108,16 +110,21 @@ export class LoginComponent implements AfterViewInit {
 
 
   tick() {
+    if (this.gamePaused) {
+      return;
+    }
     this.animate();
     this.checkSwitch();
   }
 
   startTimee() {
-    let intervalId = setInterval(() => {
-      this.time = this.time - 1;
-      if (this.time === 0) {
-        clearInterval(intervalId);
-        this.triggerDeath();
+    this.deathTimerId = setInterval(() => {
+      if (!this.gamePaused) {
+        this.time = this.time - 1;
+        if (this.time === 0) {
+          clearInterval(this.deathTimerId);
+          this.triggerDeath();
+        }
       }
     }, 1500);
   }
@@ -125,7 +132,7 @@ export class LoginComponent implements AfterViewInit {
   checkSwitch() {
     if (((Math.pow(this.globalX - this.guages[0].x, 2) + Math.pow(this.globalY - this.guages[0].y, 2) < Math.pow(this.guages[0].radius, 2)) && !this.inside) || ((Math.pow(this.globalX - this.guages[0].x, 2) + Math.pow(this.globalY - this.guages[0].y, 2) > Math.pow(this.guages[0].radius, 2)) && this.inside)) {
       this.inside = !this.inside;
-      this.time = 5 + this.maxTimeLevel;;
+      this.time = 5 + this.maxTimeLevel;
 
       if (this.inside) {
 
@@ -139,6 +146,7 @@ export class LoginComponent implements AfterViewInit {
 
   abortTimer() { // to be called when you want to stop the timer
     clearInterval(this.tid);
+    clearInterval(this.deathTimerId);
   }
 
   drawAll() {
@@ -184,7 +192,8 @@ export class LoginComponent implements AfterViewInit {
     this.isRunning = false;
     this.start = 0;
     this.percent = 0;
-    this.time = 5 + this.maxTimeLevel;;
+    this.maxTimeLevel = 0;
+    this.time = 5 + this.maxTimeLevel;
     this.up = true;
     this.coins.emit(0);
     this.animate();
